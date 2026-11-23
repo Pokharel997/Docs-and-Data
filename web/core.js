@@ -1,5 +1,5 @@
 'use strict';
-// Data & Docs core: helpers, tabs, reading/saving files, Google, folders and the sidebar, commands.
+// Docs & Data core: helpers, tabs, reading/saving files, Google, folders and the sidebar, commands.
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
@@ -197,7 +197,7 @@ function renderTabs() {
     </div>`).join('');
   $('#tabs .tab.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   $('#btnSplit').classList.toggle('on', !!split);
-  document.title = active && active.kind !== 'home' ? `${active.name}${active.dirty ? ' (edited)' : ''} – Data & Docs` : 'Data & Docs';
+  document.title = active && active.kind !== 'home' ? `${active.name}${active.dirty ? ' (edited)' : ''} – Docs & Data` : 'Docs & Data';
 }
 function setDirty(tab, dirty = true) {
   if (VIEWER) return; // the extension never changes files
@@ -295,7 +295,7 @@ function wireToolbar(tab) {
   if (VIEWER) {
     // Viewer: editing happens in the desktop app, which saves the file on disk.
     const save = tab.el.querySelector('[data-a=save]');
-    if (save) { save.textContent = 'Edit in app'; save.title = 'Open this file in the Data & Docs desktop app to change it'; save.addEventListener('click', () => editInApp(tab)); }
+    if (save) { save.textContent = 'Edit in app'; save.title = 'Open this file in the Docs & Data desktop app to change it'; save.addEventListener('click', () => editInApp(tab)); }
     tab.el.querySelector('[data-a=more]')?.remove();
     tab.el.querySelector('[data-a=google]')?.addEventListener('click', () => tab.view.google());
     return;
@@ -327,7 +327,7 @@ function readURL(url) {
     x.open('GET', url);
     x.responseType = 'blob';
     x.onload = () => (x.status === 0 || x.status === 200) && x.response ? resolve(x.response) : reject(new Error('Could not read the file'));
-    x.onerror = () => reject(new Error(VIEWER ? 'Could not read the file. Turn on “Allow access to file URLs” for the extension (Extensions → Data & Docs → Details).' : 'Could not read the file'));
+    x.onerror = () => reject(new Error(VIEWER ? 'Could not read the file. Turn on “Allow access to file URLs” for the extension (Extensions → Docs & Data → Details).' : 'Could not read the file'));
     x.send();
   });
 }

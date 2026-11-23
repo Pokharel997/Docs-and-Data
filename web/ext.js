@@ -2,7 +2,7 @@
 // Browser-extension side of the viewer (only loaded in the extension build, see extension/build.sh).
 // The extension opens and shows files; changing them is the desktop app's job:
 //   • a local file (file://…)       → the app opens that same file and saves into it
-//   • anything else (web, picked)   → a copy is saved to ~/Documents/Data & Docs/ and opened in the app
+//   • anything else (web, picked)   → a copy is saved to ~/Documents/Docs & Data/ and opened in the app
 // It talks to the app through the native messaging helper (com.datadocs.host), and falls back to a
 // datadocs:// link when the helper isn't installed.
 
@@ -39,7 +39,7 @@ function openLink(url) {
 function openAppHome() {
   if (appLink === false) { openLink(datadocsLink([])); return; }
   hostSend({ cmd: 'open', paths: [] })
-    .then(() => toast('Opening Data & Docs…'))
+    .then(() => toast('Opening Docs & Data…'))
     .catch(() => { appLink = false; openLink(datadocsLink([])); });
 }
 
@@ -51,27 +51,27 @@ async function editInApp(tab) {
     if (path) {
       // the app edits the file itself
       if (appLink !== false) {
-        try { await hostSend({ cmd: 'open', paths: [path] }); return toast(`Opening ${ref.name} in Data & Docs…`); }
+        try { await hostSend({ cmd: 'open', paths: [path] }); return toast(`Opening ${ref.name} in Docs & Data…`); }
         catch { appLink = false; }
       }
       openLink(datadocsLink([path]));
-      return toast(`Opening ${ref.name} in Data & Docs… If nothing happens, install the desktop app.`, 6000);
+      return toast(`Opening ${ref.name} in Docs & Data… If nothing happens, install the desktop app.`, 6000);
     }
     // no local file to edit: keep a copy on disk first
     const blob = await getFile(ref);
     if (appLink !== false) {
       try {
         const res = await hostSend({ cmd: 'save', name: ref.name, data: await blobToBase64(blob) });
-        return toast(`Saved a copy to ${res.path} and opened it in Data & Docs`, 6000);
+        return toast(`Saved a copy to ${res.path} and opened it in Docs & Data`, 6000);
       } catch (e) {
         if (/too large|exceeds/i.test(e.message)) throw e;
         appLink = false;
       }
     }
-    // without the helper: download into Downloads/Data & Docs, then hand the file to the app
+    // without the helper: download into Downloads/Docs & Data, then hand the file to the app
     const saved = await downloadCopy(blob, ref.name);
     openLink(datadocsLink([saved]));
-    toast(`Saved a copy to ${saved}. Opening it in Data & Docs…`, 6000);
+    toast(`Saved a copy to ${saved}. Opening it in Docs & Data…`, 6000);
   } catch (e) {
     toast(`Couldn't hand the file to the app: ${e.message}`, 6000);
   }
@@ -80,7 +80,7 @@ async function editInApp(tab) {
 function downloadCopy(blob, name) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(blob);
-    chrome.downloads.download({ url, filename: 'Data & Docs/' + name.replace(/[\\/:*?"<>|]/g, '_'), conflictAction: 'uniquify', saveAs: false }, id => {
+    chrome.downloads.download({ url, filename: 'Docs & Data/' + name.replace(/[\\/:*?"<>|]/g, '_'), conflictAction: 'uniquify', saveAs: false }, id => {
       if (chrome.runtime.lastError) { URL.revokeObjectURL(url); return reject(new Error(chrome.runtime.lastError.message)); }
       const done = delta => {
         if (delta.id !== id || !delta.state) return;
@@ -110,7 +110,7 @@ function renderAppStatus(el) {
   el.innerHTML = appLink === true
     ? '<i class="led"></i><span><b>Desktop app connected.</b> “Edit in app” opens files there for changes and saving.</span><button data-a="app">Open app</button>'
     : appLink === false
-      ? '<i class="led"></i><span><b>Desktop app not found.</b> Viewing works. To edit, install Data & Docs and open it once.</span><button data-a="app">Try to open</button>'
+      ? '<i class="led"></i><span><b>Desktop app not found.</b> Viewing works. To edit, install Docs & Data and open it once.</span><button data-a="app">Try to open</button>'
       : '<i class="led"></i><span>Looking for the desktop app…</span>';
 }
 
@@ -118,7 +118,7 @@ function renderAppStatus(el) {
 function viewerHome(tab) {
   const recent = getExtRecent();
   tab.el.innerHTML = `<div class="body"><div class="home">
-    <h1>Data &amp; Docs</h1>
+    <h1>Docs &amp; Data</h1>
     <p>View spreadsheets, documents, JSON, text, PDFs and videos in tabs. Click a local file or folder link (file://…), drop files here, or open them below. Press ${MOD}K for every command.</p>
     <div class="app-status"></div>
     <div class="file-access hide app-status"><i class="led"></i><span><b>Local files and folders are blocked.</b> Turn on “Allow access to file URLs” for this extension.</span><button data-a="perm">Show setting</button></div>
@@ -133,7 +133,7 @@ function viewerHome(tab) {
       <button class="primary">Open</button>
     </form>
     ${recent.length ? `<h2>Recent</h2><ul class="recent">${recent.map((r, i) => `<li><button data-recent="${i}" class="k-${kindOf(r.name) || 'text'}"><span class="dot"></span><span>${esc(r.name)}</span><span class="pth">${esc(pathOfURL(r.url) || r.url)}</span></button></li>`).join('')}</ul>` : ''}
-    <div class="drop-note">Viewing only. Editing and saving happen in the Data &amp; Docs desktop app (macOS, Linux, Windows).</div>
+    <div class="drop-note">Viewing only. Editing and saving happen in the Docs &amp; Data desktop app (macOS, Linux, Windows).</div>
   </div></div>`;
   renderAppStatus(tab.el.querySelector('.app-status'));
   fileAccessAllowed().then(ok => tab.el.querySelector('.file-access').classList.toggle('hide', ok));
@@ -175,7 +175,7 @@ function askSitePermission(url, name, origin) {
   const host = new URL(url).host;
   tab.el.innerHTML = `<div class="body"><div class="home">
     <h1>${esc(name)}</h1>
-    <p>To show this file, Data &amp; Docs needs to read it from <b>${esc(host)}</b>.</p>
+    <p>To show this file, Docs &amp; Data needs to read it from <b>${esc(host)}</b>.</p>
     <div class="open-row"><button class="primary" data-a="allow">Allow reading from ${esc(host)}</button></div>
   </div></div>`;
   tab.view = { onShow: () => {} };

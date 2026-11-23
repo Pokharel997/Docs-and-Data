@@ -1,4 +1,6 @@
-# Data & Docs
+<p><img src="design/logo-horizontal-light.svg" alt="Docs & Data" height="64"></p>
+
+# Docs & Data
 
 Tabbed app for spreadsheets, Word documents, JSON, Markdown and other text files, PDFs and videos, with whole-folder browsing. Successor to CSV Editor.
 
@@ -12,9 +14,9 @@ Tabbed app for spreadsheets, Word documents, JSON, Markdown and other text files
 
 **Edit in app**:
 - A local file (`file://…`) opens in the app as-is, so saving there changes the original.
-- Anything else (web files, files picked in the extension) is first saved to `~/Documents/Data & Docs/`, then opened in the app.
+- Anything else (web files, files picked in the extension) is first saved to `~/Documents/Docs & Data/`, then opened in the app.
 - The extension reaches the app through a native messaging helper, which is the app binary itself (`com.datadocs.host`). The app registers the helper with every installed Chromium-based browser each time it starts, so open the desktop app once after installing it.
-- Without the helper, the extension falls back to a `datadocs://open?path=…` link. Files that aren't on disk are then saved to `Downloads/Data & Docs/` first.
+- Without the helper, the extension falls back to a `datadocs://open?path=…` link. Files that aren't on disk are then saved to `Downloads/Docs & Data/` first.
 
 ## File types
 
@@ -44,13 +46,13 @@ Not supported: Parquet, SQLite, PowerPoint, EPUB, old `.xls`.
 - **Changed on disk**: files edited by another app reload automatically, or ask first if you have unsaved changes.
 - **Command palette** (⌘K / Ctrl+K): every command, export, open tab and folder file.
 - **Dark mode**: Settings → Theme (system / light / dark).
-- **Backups** (desktop apps): the previous version is copied to `Backups/<date>/` in the app data folder on every save (Mac: `~/Library/Application Support/Data & Docs/`, Linux: `~/.local/share/com.pokharel.datadocs/`). Turn it off in Settings.
+- **Backups** (desktop apps): the previous version is copied to `Backups/<date>/` in the app data folder on every save (Mac: `~/Library/Application Support/Docs & Data/`, Linux: `~/.local/share/com.pokharel.datadocs/`). Turn it off in Settings.
 - **Google Docs / Sheets**: copies the content and opens a new Google file; paste with ⌘V. Optional one-click Drive upload with your own OAuth client ID (Settings), when served over http(s).
 
 ## Run
 
 - **Browser**: open `web/index.html`, or serve it with `cd web && python3 -m http.server 8000`. Chrome and Edge can save back into the original files and folders. Other browsers download a copy.
-- **macOS app**: `bash app/build.sh --install` → `/Applications/Data & Docs.app`.
+- **macOS app**: `bash app/build.sh --install` → `/Applications/Docs & Data.app`.
 - **Linux / Windows app** (Tauri):
   - On Linux, install the build libraries first: `libwebkit2gtk-4.1-dev librsvg2-dev patchelf`.
   - Then `cd linux && npm install && npm run build` → `.deb`, `.rpm` and `.AppImage` (Linux) or `.msi` and `.exe` (Windows) in `linux/src-tauri/target/release/bundle/`.
@@ -95,3 +97,4 @@ Extension notes:
 - `app/main.swift`: macOS app and its extension helper.
 - `linux/src-tauri/src/`: Linux/Windows app (`main.rs`), disk helpers (`files.rs`), extension helper (`host.rs`).
 - `extension/`: manifest, background worker (file:// links, context menu, downloads), build script.
+- `design/`: logo and icon. `make-logos.py` draws the logos, `web/favicon.svg` and `app-icon.svg`. `render-icon.py` turns that into `app-icon.png`, which the Mac, Linux/Windows and extension builds use. `explorations/` holds earlier logo ideas.

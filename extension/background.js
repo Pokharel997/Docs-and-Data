@@ -1,7 +1,7 @@
 'use strict';
-// Data & Docs extension service worker:
+// Docs & Data extension service worker:
 //  • file:// links to supported files and folders open in the viewer instead of Chrome's plain view
-//  • right-click a link → "Open in Data & Docs"
+//  • right-click a link → "Open in Docs & Data"
 //  • finished downloads of supported files offer to open them
 const VIEWER = chrome.runtime.getURL('index.html');
 // shown by the viewer when opened from a file:// address (Chrome shows PDFs, images, video and HTML well itself)
@@ -23,9 +23,9 @@ async function prefs() {
 chrome.runtime.onInstalled.addListener(async () => {
   const p = await prefs();
   chrome.contextMenus.removeAll(() => {
-    chrome.contextMenus.create({ id: 'link', title: 'Open link in Data & Docs', contexts: ['link'] });
-    chrome.contextMenus.create({ id: 'page', title: 'Open this page’s file in Data & Docs', contexts: ['page'], documentUrlPatterns: ['file:///*'] });
-    chrome.contextMenus.create({ id: 'folders', title: 'Open file:// folders in Data & Docs', type: 'checkbox', checked: p.folders, contexts: ['action'] });
+    chrome.contextMenus.create({ id: 'link', title: 'Open link in Docs & Data', contexts: ['link'] });
+    chrome.contextMenus.create({ id: 'page', title: 'Open this page’s file in Docs & Data', contexts: ['page'], documentUrlPatterns: ['file:///*'] });
+    chrome.contextMenus.create({ id: 'folders', title: 'Open file:// folders in Docs & Data', type: 'checkbox', checked: p.folders, contexts: ['action'] });
     chrome.contextMenus.create({ id: 'downloads', title: 'Offer to open finished downloads', type: 'checkbox', checked: p.downloads, contexts: ['action'] });
   });
 });
@@ -69,7 +69,7 @@ chrome.downloads.onChanged.addListener(async delta => {
     type: 'basic',
     iconUrl: 'icons/icon128.png',
     title: 'Download finished',
-    message: `Open ${nameOf(item.filename)} in Data & Docs?`,
+    message: `Open ${nameOf(item.filename)} in Docs & Data?`,
     buttons: [{ title: 'Open' }],
     priority: 0,
   });

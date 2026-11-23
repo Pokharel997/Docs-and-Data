@@ -52,14 +52,14 @@ enum Files {
             ?? String(decoding: data, as: UTF8.self)
     }
 
-    /// Copies the current version of a file to ~/Library/Application Support/Data & Docs/Backups/<date>/ before it is overwritten.
+    /// Copies the current version of a file to ~/Library/Application Support/Docs & Data/Backups/<date>/ before it is overwritten.
     static func backup(_ url: URL) {
         guard FileManager.default.fileExists(atPath: url.path),
               let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return }
         let day = DateFormatter(), time = DateFormatter()
         day.dateFormat = "yyyy-MM-dd"; time.dateFormat = "HHmmss"
         let now = Date()
-        let dir = support.appendingPathComponent("Data & Docs/Backups/\(day.string(from: now))", isDirectory: true)
+        let dir = support.appendingPathComponent("Docs & Data/Backups/\(day.string(from: now))", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         let base = url.deletingPathExtension().lastPathComponent, ext = url.pathExtension
         let dest = dir.appendingPathComponent("\(base) \(time.string(from: now))" + (ext.isEmpty ? "" : ".\(ext)"))
@@ -83,7 +83,7 @@ enum Files {
 /// Native messaging helper for the browser extension. Chrome/Edge/Brave start this same executable with the
 /// extension's origin as an argument and exchange 4-byte-length-prefixed JSON over stdin/stdout:
 ///   {"cmd":"ping"} · {"cmd":"open","paths":[…]} (no paths: just start the app)
-///   {"cmd":"save","name":"x.csv","data":<base64>} → ~/Documents/Data & Docs/x.csv, opened in the app
+///   {"cmd":"save","name":"x.csv","data":<base64>} → ~/Documents/Docs & Data/x.csv, opened in the app
 enum NativeHost {
     static let name = "com.datadocs.host"
     static let origin = "chrome-extension://cigokpbknkfmhhhinjnejdabdfefbgeb/"
@@ -120,7 +120,7 @@ enum NativeHost {
     static func handle(_ msg: [String: Any]) throws -> [String: Any] {
         switch msg["cmd"] as? String ?? "" {
         case "ping":
-            return ["ok": true, "app": "Data & Docs",
+            return ["ok": true, "app": "Docs & Data",
                     "version": Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1"]
         case "open":
             let asked = msg["paths"] as? [String] ?? []
@@ -141,11 +141,11 @@ enum NativeHost {
         }
     }
 
-    /// ~/Documents/Data & Docs — where files handed over from the browser are kept.
+    /// ~/Documents/Docs & Data — where files handed over from the browser are kept.
     static func inboxDir() -> URL {
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
             ?? FileManager.default.homeDirectoryForCurrentUser
-        return docs.appendingPathComponent("Data & Docs", isDirectory: true)
+        return docs.appendingPathComponent("Docs & Data", isDirectory: true)
     }
 
     static func uniqueURL(in dir: URL, name: String) -> URL {
@@ -171,14 +171,14 @@ enum NativeHost {
         p.standardError = FileHandle.nullDevice
         try p.run()
         p.waitUntilExit()
-        if p.terminationStatus != 0 { throw HostError("Could not start Data & Docs") }
+        if p.terminationStatus != 0 { throw HostError("Could not start Docs & Data") }
     }
 
     /// Registers the helper with every Chromium-based browser that is installed.
     static func installManifests() {
         guard let exe = Bundle.main.executablePath,
               let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first else { return }
-        let manifest: [String: Any] = ["name": name, "description": "Data & Docs — opens files from the browser extension",
+        let manifest: [String: Any] = ["name": name, "description": "Docs & Data — opens files from the browser extension",
                                        "path": exe, "type": "stdio", "allowed_origins": [origin]]
         guard let data = try? JSONSerialization.data(withJSONObject: manifest, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]) else { return }
         for browser in ["Google/Chrome", "Google/Chrome Beta", "Google/Chrome Canary", "Chromium",
@@ -203,7 +203,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate,
     private var pageLoaded = false
     private var pendingURLs: [URL] = []
     private var discardConfirmed = false
-    private let appName = "Data & Docs"
+    private let appName = "Docs & Data"
 
     // MARK: - App lifecycle
 
@@ -277,7 +277,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate,
 
         titleObserver = webView.observe(\.title) { [weak self] webView, _ in
             let title = webView.title ?? ""
-            Task { @MainActor in self?.window.title = title.isEmpty ? "Data & Docs" : title }
+            Task { @MainActor in self?.window.title = title.isEmpty ? "Docs & Data" : title }
         }
 
         let page = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "web")!
@@ -523,7 +523,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate,
         }
         group.notify(queue: .main) {
             if let failure { self.showError(failure); return }
-            self.js("toast('Data & Docs now opens .csv, .tsv, .json and .docx files')")
+            self.js("toast('Docs & Data now opens .csv, .tsv, .json and .docx files')")
         }
     }
 

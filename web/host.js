@@ -29,7 +29,7 @@ const Host = (() => {
         mac.postMessage({ ...args, cmd, req });
       });
     }
-    return Promise.reject(new Error('This needs the Data & Docs desktop app'));
+    return Promise.reject(new Error('This needs the Docs & Data desktop app'));
   }
   // fire-and-forget
   const post = msg => { call(msg.cmd, msg).catch(() => {}); };

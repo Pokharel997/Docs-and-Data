@@ -6,7 +6,7 @@
 //!
 //!   {"cmd":"ping"}                         → {"ok":true,"version":"…"}
 //!   {"cmd":"open","paths":["/a.csv"]}      → opens the files in the app (no paths: just starts it)
-//!   {"cmd":"save","name":"x.csv","data":b64} → writes ~/Documents/Data & Docs/x.csv, opens it in the app
+//!   {"cmd":"save","name":"x.csv","data":b64} → writes ~/Documents/Docs & Data/x.csv, opens it in the app
 use crate::files;
 use base64::Engine;
 use serde_json::{json, Value};
@@ -55,7 +55,7 @@ fn send(v: &Value) -> std::io::Result<()> {
 
 fn handle(msg: &Value) -> Result<Value, String> {
     match msg["cmd"].as_str().unwrap_or("") {
-        "ping" => Ok(json!({ "ok": true, "app": "Data & Docs", "version": env!("CARGO_PKG_VERSION") })),
+        "ping" => Ok(json!({ "ok": true, "app": "Docs & Data", "version": env!("CARGO_PKG_VERSION") })),
         "open" => {
             let paths: Vec<PathBuf> = msg["paths"].as_array().into_iter().flatten()
                 .filter_map(|p| p.as_str()).map(PathBuf::from).filter(|p| p.exists()).collect();
@@ -98,7 +98,7 @@ pub fn install_manifests() {
     let config = std::env::var_os("XDG_CONFIG_HOME").map(PathBuf::from).unwrap_or_else(|| home.join(".config"));
     let manifest = json!({
         "name": NAME,
-        "description": "Data & Docs — opens files from the browser extension",
+        "description": "Docs & Data — opens files from the browser extension",
         "path": app_exe().to_string_lossy(),
         "type": "stdio",
         "allowed_origins": [EXTENSION_ORIGIN],

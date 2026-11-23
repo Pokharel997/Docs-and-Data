@@ -14,7 +14,7 @@ python3 - <<'EOF'
 p = 'dist/index.html'
 s = open(p, encoding='utf-8').read()
 s = s.replace('<script src="extras.js"></script>', '<script src="ext.js"></script>\n<script src="extras.js"></script>')
-s = s.replace('<title>Data &amp; Docs</title>', '<title>New tab · Data &amp; Docs</title>')
+s = s.replace('<title>Docs &amp; Data</title>', '<title>New tab · Docs &amp; Data</title>')
 open(p, 'w', encoding='utf-8').write(s)
 EOF
 if [[ "${1:-}" == "--zip" ]]; then

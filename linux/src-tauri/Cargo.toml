@@ -1,7 +1,7 @@
 [package]
 name = "data-docs"
 version = "1.0.0"
-description = "Data & Docs desktop app (Linux / Windows)"
+description = "Docs & Data desktop app (Linux / Windows)"
 edition = "2021"
 
 [build-dependencies]

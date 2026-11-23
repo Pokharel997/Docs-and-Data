@@ -1,4 +1,4 @@
-// Data & Docs for Linux (and Windows). Hosts ../web in a window and answers the page's
+// Docs & Data for Linux (and Windows). Hosts ../web in a window and answers the page's
 // `native` messages — the same protocol the macOS app (app/main.swift) speaks.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
@@ -58,7 +58,7 @@ fn file_ref(p: &Path) -> Value {
 }
 
 fn backups_dir(app: &AppHandle) -> PathBuf {
-    app.path().app_data_dir().unwrap_or_else(|_| std::env::temp_dir().join("Data & Docs")).join("Backups")
+    app.path().app_data_dir().unwrap_or_else(|_| std::env::temp_dir().join("Docs & Data")).join("Backups")
 }
 
 /// Every request from the page: `{cmd, ...args}` → result or error message.
@@ -178,7 +178,7 @@ fn main() {
         .setup(|app| {
             let handle = app.handle().clone();
             WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
-                .title("Data & Docs")
+                .title("Docs & Data")
                 .inner_size(1320.0, 860.0)
                 .min_inner_size(720.0, 420.0)
                 .on_navigation(move |url| allow_navigation(&handle, url))
@@ -213,7 +213,7 @@ fn main() {
             _ => {}
         })
         .build(tauri::generate_context!())
-        .expect("failed to start Data & Docs");
+        .expect("failed to start Docs & Data");
 
     app.run(|_app, _event: RunEvent| {});
 }

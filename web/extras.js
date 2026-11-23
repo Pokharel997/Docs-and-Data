@@ -202,7 +202,7 @@ function paletteCommands() {
   if (VIEWER) {
     const editing = /^(New |Save|Reload from disk|Theme|Settings)/;
     cmds.splice(0, cmds.length, ...cmds.filter(c => !editing.test(c.label)),
-      { label: 'Edit in the Data & Docs app', run: () => active && active.kind !== 'home' ? editInApp(active) : openAppHome(), hint: 'Command' },
+      { label: 'Edit in the Docs & Data app', run: () => active && active.kind !== 'home' ? editInApp(active) : openAppHome(), hint: 'Command' },
       ...['Theme: light', 'Theme: dark', 'Theme: match the system'].map(l => cmds.find(c => c.label === l)).filter(Boolean));
   } else for (const it of active?.view?.exports?.() || []) if (it !== '-' && !it.disabled) cmds.push({ label: it.label, run: it.action, hint: active.name });
   for (const t of tabs) if (t !== active) cmds.push({ label: `Go to ${t.name}`, run: () => activate(t), hint: 'Tab' });

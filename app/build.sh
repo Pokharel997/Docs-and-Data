@@ -1,9 +1,9 @@
 #!/bin/bash
-# Builds "Data & Docs.app". Pass --install to copy it into /Applications (or ~/Applications) and register it.
+# Builds "Docs & Data.app". Pass --install to copy it into /Applications (or ~/Applications) and register it.
 set -euo pipefail
 cd "$(dirname "$0")"
 
-NAME="Data & Docs"
+NAME="Docs & Data"
 APP="build/$NAME.app"
 rm -rf build && mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources/web"
 
@@ -14,8 +14,8 @@ echo "→ Bundling resources"
 cp Info.plist "$APP/Contents/"
 cp ../web/*.html ../web/*.css ../web/*.js ../web/*.svg "$APP/Contents/Resources/web/"
 
-echo "→ Generating icon"
-swift make-icon.swift build/icon.png
+echo "→ Icon (design/app-icon.png, made by design/make-logos.py + render-icon.py)"
+cp ../design/app-icon.png build/icon.png
 ICONSET=build/AppIcon.iconset && mkdir -p "$ICONSET"
 for s in 16 32 128 256 512; do
   sips -z $s $s build/icon.png --out "$ICONSET/icon_${s}x${s}.png" >/dev/null
@@ -30,7 +30,7 @@ if [[ "${1:-}" == "--install" ]]; then
   DEST=/Applications
   [[ -w $DEST ]] || DEST="$HOME/Applications"
   mkdir -p "$DEST"
-  rm -rf "$DEST/$NAME.app"
+  rm -rf "$DEST/$NAME.app" "$DEST/Data & Docs.app"  # also the app's previous name
   ditto "$APP" "$DEST/$NAME.app"
   /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$DEST/$NAME.app"
   echo "✓ Installed to $DEST/$NAME.app"

@@ -2,8 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleName</key><string>Data &amp; Docs</string>
-	<key>CFBundleDisplayName</key><string>Data &amp; Docs</string>
+	<key>CFBundleName</key><string>Docs &amp; Data</string>
+	<key>CFBundleDisplayName</key><string>Docs &amp; Data</string>
 	<key>CFBundleIdentifier</key><string>com.pokharel.datadocs</string>
 	<key>CFBundleExecutable</key><string>DataDocs</string>
 	<key>CFBundlePackageType</key><string>APPL</string>

@@ -1,7 +1,8 @@
-# Generates the Data & Docs logo set: the four-tile icon (sheets, documents, JSON, media) and "Data & Docs" beside it.
+# Generates the Docs & Data logo set: the four-tile icon (D · & · { } · D) and "Docs & Data" beside it.
 # Text is converted to outlines, so no font is needed to view the files.
 #   pip install fonttools && python3 design/make-logos.py        (macOS: uses Avenir Next from the system)
-# The app icons themselves are drawn by app/make-icon.swift with the same geometry.
+# Also writes app-icon.svg (rendered to app-icon.png by render-icon.py; the Mac, Linux/Windows and extension icons come from it)
+# and ../web/favicon.svg.
 import os
 from fontTools.ttLib import TTCollection
 from fontTools.pens.svgPathPen import SVGPathPen
@@ -9,17 +10,16 @@ from fontTools.pens.transformPen import TransformPen
 here = os.path.dirname(os.path.abspath(__file__))
 
 CSV, DOC, JSON, MEDIA = '#0f7b5f', '#2b59c3', '#a96500', '#8a3fa0'
-TILES = [CSV, DOC, JSON, MEDIA]  # top-left, top-right, bottom-left, bottom-right
+TILES = [CSV, DOC, JSON, MEDIA]  # old four-tile order (kept for the explorations)
+ICON_TILES = [('D', DOC), ('&', JSON), (None, MEDIA), ('D', CSV)]  # top-left, top-right, bottom-left, bottom-right
 GREEN, INK, PAPER = CSV, '#1b2530', '#f7f6f2'
+ACCENT, ACCENT_DARK = DOC, '#7aa0f2'  # colour of the "&" in the name
 
 _faces = None
 
 def text(s, x, y, size, fill, face='Avenir Next Bold', tracking=0.0, colors=None, anchor='start'):
     """Text as SVG paths. Returns (svg, width). colors: {index: color} to recolour single characters."""
-    global _faces
-    if _faces is None:
-        _faces = {f['name'].getDebugName(4): f for f in TTCollection('/System/Library/Fonts/Avenir Next.ttc').fonts}
-    font = _faces[face]
+    font = _font(face)
     gs, cmap, upm = font.getGlyphSet(), font.getBestCmap(), font['head'].unitsPerEm
     k = size / upm
     width = sum(gs[cmap[ord(ch)]].width * k + tracking for ch in s) - tracking
@@ -34,6 +34,25 @@ def text(s, x, y, size, fill, face='Avenir Next Bold', tracking=0.0, colors=None
         cx += g.width * k + tracking
     return ''.join(out), width
 
+def _font(face):
+    global _faces
+    if _faces is None:
+        _faces = {f['name'].getDebugName(4): f for f in TTCollection('/System/Library/Fonts/Avenir Next.ttc').fonts}
+    return _faces[face]
+
+def letter(ch, cx, cy, size, face='Avenir Next Heavy'):
+    """One character as a path, centred by its ink on (cx, cy) (vertically on the cap height)."""
+    from fontTools.pens.boundsPen import BoundsPen
+    font = _font(face)
+    gs, cmap, upm = font.getGlyphSet(), font.getBestCmap(), font['head'].unitsPerEm
+    k = size / upm
+    g = gs[cmap[ord(ch)]]
+    bp = BoundsPen(gs); g.draw(bp)
+    xmin, _, xmax, _ = bp.bounds
+    x = cx - (xmin + xmax) / 2 * k
+    pen = SVGPathPen(gs); g.draw(TransformPen(pen, (k, 0, 0, -k, x, cy + size * 0.708 / 2)))
+    return pen.getCommands()
+
 def tile_glyph(i, x, y, t):
     """White symbol inside a tile: grid (sheets), text lines (documents), braces (JSON), play (media)."""
     s = t / 300
@@ -47,8 +66,9 @@ def tile_glyph(i, x, y, t):
         out = []
         for d in (-1, 1):
             cx = x + 150 * s + d * 62 * s
-            pts = [(cx + d * 18 * s, y + 70 * s), (cx, y + 90 * s), (cx, y + 128 * s), (cx - d * 24 * s, y + 150 * s),
-                   (cx, y + 172 * s), (cx, y + 210 * s), (cx + d * 18 * s, y + 230 * s)]
+            # d = -1: "{" on the left (ends curl inward, point faces out); d = 1: "}" on the right
+            pts = [(cx - d * 18 * s, y + 70 * s), (cx, y + 90 * s), (cx, y + 128 * s), (cx + d * 24 * s, y + 150 * s),
+                   (cx, y + 172 * s), (cx, y + 210 * s), (cx - d * 18 * s, y + 230 * s)]
             out.append('<polyline points="' + ' '.join(f'{px:.1f},{py:.1f}' for px, py in pts)
                        + f'" fill="none" stroke="#fff" stroke-opacity=".92" stroke-width="{26 * s:.1f}" stroke-linecap="round" stroke-linejoin="round"/>')
         return ''.join(out)
@@ -63,11 +83,21 @@ def four_tiles(x0, y0, tile, gap, glyphs=True, colors=TILES, radius=None):
     return ''.join(out)
 
 def icon(x, y, size, gid):
-    """The app icon (slate squircle + four tiles) at x,y with the given size; art is 824 units wide."""
-    body = (f'<defs><linearGradient id="{gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C3A48"/>'
+    """The app icon at x,y with the given size: slate squircle, tiles D (docs) · & · { } (JSON) · D (data).
+    The art is drawn in a 1024 square with the squircle at 100…924."""
+    body = [f'<defs><linearGradient id="{gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C3A48"/>'
             f'<stop offset="1" stop-color="#18212B"/></linearGradient></defs>'
-            f'<rect x="100" y="100" width="824" height="824" rx="185" fill="url(#{gid})"/>'
-            + four_tiles(190, 190, 300, 44))
+            f'<rect x="100" y="100" width="824" height="824" rx="185" fill="url(#{gid})"/>']
+    t, gap = 300, 44
+    for i, (ch, color) in enumerate(ICON_TILES):
+        tx, ty = 190 + (i % 2) * (t + gap), 190 + (i // 2) * (t + gap)
+        body.append(f'<rect x="{tx}" y="{ty}" width="{t}" height="{t}" rx="56" fill="{color}"/>')
+        if ch:
+            d = letter(ch, tx + t / 2, ty + t / 2, 210, 'Avenir Next Heavy' if ch == 'D' else 'Avenir Next Bold')
+            body.append(f'<path d="{d}" fill="#fff"/>')
+        else:
+            body.append(tile_glyph(2, tx, ty, t))
+    body = ''.join(body)
     return f'<g transform="translate({x} {y}) scale({size / 824}) translate(-100 -100)">{body}</g>'
 
 def svg(w, h, body, bg=None):
@@ -78,21 +108,21 @@ def save(name, content):
     with open(os.path.join(here, name), 'w') as f: f.write(content)
 
 def main():
-    for theme, ink, amp in [('light', INK, GREEN), ('dark', PAPER, '#3fb68e')]:
+    for theme, ink, amp in [('light', INK, ACCENT), ('dark', PAPER, ACCENT_DARK)]:
         # horizontal: icon + name
-        words, tw = text('Data & Docs', 212, 130, 84, ink, tracking=-1.5, colors={5: amp})
+        words, tw = text('Docs & Data', 212, 130, 84, ink, tracking=-1.5, colors={5: amp})
         save(f'logo-horizontal-{theme}.svg', svg(round(212 + tw + 24), 200, icon(20, 20, 160, f'h{theme}') + words))
         # stacked: icon above name and what it opens
-        words, _ = text('Data & Docs', 260, 290, 64, ink, tracking=-1, colors={5: amp}, anchor='middle')
-        tag, _ = text('SHEETS · DOCS · JSON · MEDIA', 260, 340, 21, ink, face='Avenir Next Demi Bold', tracking=4, anchor='middle')
+        words, _ = text('Docs & Data', 260, 290, 64, ink, tracking=-1, colors={5: amp}, anchor='middle')
+        tag, _ = text('DOCS · SHEETS · JSON · MEDIA', 260, 340, 21, ink, face='Avenir Next Demi Bold', tracking=4, anchor='middle')
         save(f'logo-stacked-{theme}.svg', svg(520, 380, icon(180, 20, 160, f's{theme}') + words + f'<g opacity=".6">{tag}</g>'))
 
     save('app-icon.svg', svg(1024, 1024, icon(100, 100, 824, 'app')))
     # browser-tab icon: just the four tiles (the symbols disappear at 16 px)
-    save('../web/favicon.svg', svg(64, 64, four_tiles(4, 4, 27, 2, glyphs=False, radius=6)))
+    save('../web/favicon.svg', svg(64, 64, four_tiles(4, 4, 27, 2, glyphs=False, radius=6, colors=[c for _, c in ICON_TILES])))
 
     rows = [('Horizontal: header, website, README', 'logo-horizontal', 100), ('Stacked: splash, About, store page', 'logo-stacked', 170)]
-    html = ['<!doctype html><meta charset=utf-8><title>Data & Docs logos</title><style>'
+    html = ['<!doctype html><meta charset=utf-8><title>Docs & Data logos</title><style>'
             'body{margin:0;font:600 13px -apple-system,sans-serif;color:#56626e;background:#e9ecef;padding:28px}'
             '.row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}.card{border-radius:14px;padding:26px;display:flex;align-items:center;justify-content:center;min-height:150px}'
             '.light{background:#fff}.dark{background:#1b2530}h3{margin:0 0 8px;font-size:13px}.sizes{display:flex;gap:18px;align-items:end;background:#fff;border-radius:14px;padding:22px}</style>']

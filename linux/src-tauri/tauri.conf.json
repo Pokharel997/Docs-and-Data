@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Data & Docs",
+  "productName": "Docs & Data",
   "mainBinaryName": "data-docs",
   "version": "1.0.0",
   "identifier": "com.pokharel.datadocs",
@@ -36,7 +36,7 @@
     "targets": "all",
     "category": "Office",
     "shortDescription": "Open and edit spreadsheets, Word documents, JSON and more in tabs",
-    "longDescription": "Data & Docs opens CSV, Excel, Word, JSON, Markdown, YAML, XML, text, PDF, video and image files in tabs, with folder browsing, find & replace, charts and file comparison. It also lets the Data & Docs browser extension hand files over for editing.",
+    "longDescription": "Docs & Data opens CSV, Excel, Word, JSON, Markdown, YAML, XML, text, PDF, video and image files in tabs, with folder browsing, find & replace, charts and file comparison. It also lets the Docs & Data browser extension hand files over for editing.",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

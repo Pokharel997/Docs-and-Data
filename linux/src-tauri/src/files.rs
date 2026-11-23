@@ -109,11 +109,11 @@ pub fn unique_path(dir: &Path, name: &str) -> PathBuf {
     (2..).map(|n| dir.join(format!("{stem} ({n}){ext}"))).find(|p| !p.exists()).unwrap()
 }
 
-/// Where files handed over from the browser are kept: ~/Documents/Data & Docs
+/// Where files handed over from the browser are kept: ~/Documents/Docs & Data
 pub fn inbox_dir() -> PathBuf {
     let home = std::env::var_os("HOME").or_else(|| std::env::var_os("USERPROFILE")).map(PathBuf::from).unwrap_or_else(std::env::temp_dir);
     let docs = home.join("Documents");
-    (if docs.is_dir() { docs } else { home }).join("Data & Docs")
+    (if docs.is_dir() { docs } else { home }).join("Docs & Data")
 }
 
 /// Paths from command-line style arguments: plain paths, file:// URLs and datadocs://open?path=… links.
