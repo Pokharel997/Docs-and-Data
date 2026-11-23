@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><defs><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C3A48"/><stop offset="1" stop-color="#18212B"/></linearGradient></defs>
+<rect x="100" y="100" width="824" height="824" rx="185" fill="url(#gb)"/>
+<path d="M250 300 h170 a28 28 0 0 1 26 18 l18 42 H774 a28 28 0 0 1 28 28 V830 H250 Z" fill="#8a3fa0"/>
+<path d="M222 360 H660 L800 500 V800 a36 36 0 0 1 -36 36 H258 a36 36 0 0 1 -36 -36 Z" fill="#f7f6f2"/>
+<path d="M660 360 V464 a36 36 0 0 0 36 36 H800 Z" fill="#0f7b5f"/>
+<g stroke="#f7f6f2" stroke-width="10" opacity=".85"><line x1="695" y1="395" x2="695" y2="500"/><line x1="730" y1="430" x2="730" y2="500"/><line x1="765" y1="465" x2="765" y2="500"/><line x1="660" y1="430" x2="730" y2="430"/><line x1="660" y1="465" x2="765" y2="465"/></g>
+<g fill="#2b59c3"><rect x="282" y="432" width="300" height="34" rx="17"/></g>
+<g fill="#1b2530" opacity=".28"><rect x="282" y="500" width="330" height="22" rx="11"/><rect x="282" y="546" width="440" height="22" rx="11"/><rect x="282" y="592" width="400" height="22" rx="11"/></g>
+<text x="282" y="760" font-family="Menlo, monospace" font-weight="700" font-size="120" fill="#a96500">{ }</text>
+</svg>

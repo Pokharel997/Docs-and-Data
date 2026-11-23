@@ -1,0 +1,49 @@
+# Builds the Linux (.deb, .rpm, .AppImage) and Windows (.msi, .exe) apps and the browser extension zip.
+name: Desktop builds
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: linux
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with: { workspaces: linux/src-tauri }
+      - name: Linux build libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf rpm \
+            gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-libav
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: data-docs-${{ runner.os }}
+          path: |
+            linux/src-tauri/target/release/bundle/deb/*.deb
+            linux/src-tauri/target/release/bundle/rpm/*.rpm
+            linux/src-tauri/target/release/bundle/appimage/*.AppImage
+            linux/src-tauri/target/release/bundle/msi/*.msi
+            linux/src-tauri/target/release/bundle/nsis/*.exe
+
+  extension:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash extension/build.sh --zip
+      - uses: actions/upload-artifact@v4
+        with: { name: data-docs-extension, path: extension/data-docs-extension.zip }

@@ -1,0 +1,148 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Data & Docs",
+  "mainBinaryName": "data-docs",
+  "version": "1.0.0",
+  "identifier": "com.pokharel.datadocs",
+  "build": {
+    "frontendDist": "../dist",
+    "beforeBuildCommand": "npm run prepare-web",
+    "beforeDevCommand": "npm run prepare-web"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [],
+    "security": {
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "**"
+        ]
+      }
+    }
+  },
+  "plugins": {
+    "deep-link": {
+      "desktop": {
+        "schemes": [
+          "datadocs"
+        ]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Office",
+    "shortDescription": "Open and edit spreadsheets, Word documents, JSON and more in tabs",
+    "longDescription": "Data & Docs opens CSV, Excel, Word, JSON, Markdown, YAML, XML, text, PDF, video and image files in tabs, with folder browsing, find & replace, charts and file comparison. It also lets the Data & Docs browser extension hand files over for editing.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "csv"
+        ],
+        "name": "CSV Document",
+        "mimeType": "text/csv",
+        "role": "Editor"
+      },
+      {
+        "ext": [
+          "tsv"
+        ],
+        "name": "TSV Document",
+        "mimeType": "text/tab-separated-values",
+        "role": "Editor"
+      },
+      {
+        "ext": [
+          "xlsx"
+        ],
+        "name": "Excel Workbook",
+        "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "role": "Editor",
+        "rank": "Alternate"
+      },
+      {
+        "ext": [
+          "docx"
+        ],
+        "name": "Word Document",
+        "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "role": "Editor",
+        "rank": "Alternate"
+      },
+      {
+        "ext": [
+          "json"
+        ],
+        "name": "JSON Document",
+        "mimeType": "application/json",
+        "role": "Editor",
+        "rank": "Alternate"
+      },
+      {
+        "ext": [
+          "jsonl",
+          "ndjson"
+        ],
+        "name": "JSON Lines",
+        "mimeType": "application/x-ndjson",
+        "role": "Editor",
+        "rank": "Alternate"
+      },
+      {
+        "ext": [
+          "md",
+          "markdown"
+        ],
+        "name": "Markdown",
+        "mimeType": "text/markdown",
+        "role": "Editor",
+        "rank": "Alternate"
+      },
+      {
+        "ext": [
+          "yaml",
+          "yml"
+        ],
+        "name": "YAML",
+        "mimeType": "application/yaml",
+        "role": "Editor",
+        "rank": "Alternate"
+      }
+    ],
+    "linux": {
+      "deb": {
+        "depends": [
+          "gstreamer1.0-plugins-good"
+        ],
+        "recommends": [
+          "gstreamer1.0-plugins-bad",
+          "gstreamer1.0-libav",
+          "libreoffice-writer"
+        ]
+      },
+      "rpm": {
+        "depends": [
+          "gstreamer1-plugins-good"
+        ],
+        "recommends": [
+          "gstreamer1-plugins-bad-free",
+          "gstreamer1-libav",
+          "libreoffice-writer"
+        ]
+      },
+      "appimage": {
+        "bundleMediaFramework": true
+      }
+    }
+  }
+}

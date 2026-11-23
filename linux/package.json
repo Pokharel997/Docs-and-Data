@@ -1,0 +1,15 @@
+{
+  "name": "data-docs-desktop",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Data & Docs for Linux (and Windows) - Tauri shell around ../web",
+  "scripts": {
+    "prepare-web": "node -e \"const fs=require('fs');fs.rmSync('dist',{recursive:true,force:true});fs.mkdirSync('dist');for(const f of fs.readdirSync('../web'))fs.copyFileSync('../web/'+f,'dist/'+f)\"",
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}
