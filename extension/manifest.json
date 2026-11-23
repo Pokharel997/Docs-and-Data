@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "Docs & Data",
+  "version": "1.0.0",
+  "description": "Open CSV, Excel, Word, JSON, Markdown, PDF and video files and whole folders in browser tabs. Edit them in the Docs & Data app.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA622iPcddO1E2fw68OKEG46hSk1IjpGX7Sn2XYePQyMDwZGxWXTCbCmZST1aiSyDoSg0xQuaa64MsvmWw8kN+u0X17m9KNA6TV7WdkPmZ1FcPWJXvKk4TfaG+hT6Ne1skc4RmX9E9dbIeVDLW57yNfq9VNdRDTfHjnc14Grq7sLHweDBksmZMqTM46TBPu2BDIQpChsS86lwFkCa3tj1gEF95hUAyIa1nnqHnuo8U1DPAnzc5pGBWQJVjR7S7R341BR7yTyO9K3W6n3STTND+rcOJJkJZWEZAz/Jb7J62N0lRtpfl2elVf0tyd/nTQ+TMtwRPPQC7wSlyEBzUUuNj1wIDAQAB",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Open Docs & Data",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "permissions": [
+    "contextMenus",
+    "webNavigation",
+    "nativeMessaging",
+    "downloads",
+    "notifications",
+    "storage"
+  ],
+  "host_permissions": [
+    "file:///*"
+  ],
+  "optional_host_permissions": [
+    "<all_urls>"
+  ],
+  "minimum_chrome_version": "116"
+}
